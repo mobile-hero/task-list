@@ -18,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
     final bloc = context.read<TaskBloc>();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Todo List'),
+        title: const Text('Todo List'),
         centerTitle: true,
       ),
       body: BlocConsumer<TaskBloc, TaskState>(
@@ -70,6 +70,12 @@ class _MainScreenState extends State<MainScreen> {
                         decoration:
                             item.isDone ? TextDecoration.lineThrough : null),
                   ),
+                  trailing: item.isDone ? IconButton(
+                    onPressed: () {
+                      bloc.add(DeleteTaskEvent(item, position));
+                    },
+                    icon: const Icon(Icons.delete),
+                  ) : null,
                   onTap: () {
                     bloc.add(item.isDone
                         ? SetTaskUndoneEvent(item, position)
@@ -82,9 +88,7 @@ class _MainScreenState extends State<MainScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          bloc.add(CreateTaskEvent('new event'));
-        },
+        onPressed: () => showCreateTaskDialog(context, bloc),
         child: const Icon(Icons.add),
       ),
     );
@@ -95,6 +99,21 @@ class _MainScreenState extends State<MainScreen> {
     return SizeTransition(
       sizeFactor: animation,
       child: ListTile(
+        leading: Container(
+          height: 48,
+          width: 48,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.blue.shade900,
+          ),
+          child: Text(
+            task.text[0].toUpperCase(),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: Colors.white,
+            ),
+          ),
+        ),
         title: Text(
           task.text,
           style: TextStyle(
@@ -102,5 +121,31 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
     );
+  }
+
+  void showCreateTaskDialog(BuildContext context, TaskBloc taskBloc) async {
+    final TextEditingController controller = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Add a new todo item'),
+            content: TextField(
+              controller: controller,
+              decoration: const InputDecoration(hintText: 'Type your new todo'),
+              keyboardType: TextInputType.text,
+              textCapitalization: TextCapitalization.sentences,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  taskBloc.add(CreateTaskEvent(controller.text));
+                  Navigator.pop(context);
+                },
+                child: const Text('Add'),
+              ),
+            ],
+          );
+        });
   }
 }

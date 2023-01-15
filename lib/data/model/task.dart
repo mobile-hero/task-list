@@ -1,4 +1,6 @@
-class Task {
+import 'package:equatable/equatable.dart';
+
+class Task extends Equatable {
   int? id;
   final String text;
   bool isDone;
@@ -23,6 +25,9 @@ class Task {
         TaskSql.isDone: isDone ? 1 : 0,
         TaskSql.deletedAt: deletedAt,
       };
+
+  @override
+  List<Object> get props => [id ?? -1, text, isDone, deletedAt ?? ''];
 }
 
 class TaskSql {
