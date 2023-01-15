@@ -4,7 +4,7 @@ import 'package:task_list/data/model/task.dart';
 class DatabaseCreator {
   Database? database;
 
-  void create() async {
+  Future<void> create() async {
     var db = await openDatabase(
       'task.db',
       version: 1,
@@ -13,5 +13,6 @@ class DatabaseCreator {
       },
     );
     database = db;
+    return Future.value();
   }
 }

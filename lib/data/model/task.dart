@@ -1,8 +1,8 @@
 class Task {
-  final int? id;
+  int? id;
   final String text;
-  final bool isDone;
-  final String? deletedAt;
+  bool isDone;
+  String? deletedAt;
 
   Task({this.id, required this.text, required this.isDone, this.deletedAt});
 
@@ -13,14 +13,14 @@ class Task {
   factory Task.fromJson(Map<String, dynamic> json) => Task(
         id: json[TaskSql.id],
         text: json[TaskSql.text],
-        isDone: json[TaskSql.isDone],
+        isDone: json[TaskSql.isDone] == 1,
         deletedAt: json[TaskSql.deletedAt],
       );
 
   Map<String, dynamic> toJson() => {
         TaskSql.id: id,
         TaskSql.text: text,
-        TaskSql.isDone: isDone,
+        TaskSql.isDone: isDone ? 1 : 0,
         TaskSql.deletedAt: deletedAt,
       };
 }
